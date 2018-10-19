@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Sound extends PApplet implements VoltageInputVoltageChangeListener {
 
+    // Initialise class variables
     private PApplet p;
     private Game game;
     private boolean solved;
@@ -30,6 +31,7 @@ public class Sound extends PApplet implements VoltageInputVoltageChangeListener 
     }
 
     public void draw(){
+        // Display text
         p.fill(textR,textG,textB);
         p.stroke(textR, textG,textB);
         String toDisplay = "Clap IT (" + display+")";
@@ -38,6 +40,7 @@ public class Sound extends PApplet implements VoltageInputVoltageChangeListener 
         p.noStroke();
         p.rectMode(CENTER);
 
+        // Show the volume level as stacks going from yello to red
         if(counter <= maxStacks && !isSolved()) {
             setTextColor(255,255,255);
             for (float i = 1; i < counter; i++) {
@@ -46,12 +49,14 @@ public class Sound extends PApplet implements VoltageInputVoltageChangeListener 
                 p.rect(((width)/5) * 4, ((height/2)+140) - (i * 15), 140, 10);
 
             }
-        } else {
+        } else { // Set them green when its completed
             setTextColor(0,255,0);
             display--;
+            // Sleep for a bit of debounce
             try{TimeUnit.MILLISECONDS.sleep(300);} catch(Exception e){ System.out.println(e);};
         }
 
+        // When the game is completed
         if(display == 0) {
             for (int i = 1; i < maxStacks; i++) {
                 p.fill(0, 255, 0);
@@ -62,10 +67,18 @@ public class Sound extends PApplet implements VoltageInputVoltageChangeListener 
         }
     }
 
+    /**
+     * Returns if the game is solved
+     * @return
+     */
     public boolean isSolved() {
         return solved;
     }
 
+    /**
+     * Maps the voltage input of the sound sensor
+     * @param event
+     */
     @Override
     public void onVoltageChange(VoltageInputVoltageChangeEvent event) {
         double input = event.getVoltage() * 1000;
@@ -78,12 +91,21 @@ public class Sound extends PApplet implements VoltageInputVoltageChangeListener 
         //counter =  (int) (1 + (input - 60)*(20-3)/(200-60));
     }
 
+    /**
+     * Changes the color of the text
+     * @param r
+     * @param g
+     * @param b
+     */
     private void setTextColor(int r, int g, int b){
         this.textR = r;
         this.textG = g;
         this.textB = b;
     }
 
+    /**
+     * Resets the class
+     */
     public void newGame(){
         solved = false;
 

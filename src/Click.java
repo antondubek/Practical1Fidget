@@ -2,8 +2,12 @@ import com.phidget22.DigitalInputStateChangeEvent;
 import com.phidget22.DigitalInputStateChangeListener;
 import processing.core.PApplet;
 
+/**
+ * Class that looks after the click it part
+ */
 public class Click extends PApplet implements DigitalInputStateChangeListener {
 
+    // Initialisation of variables
     private PApplet p;
     private Game game;
     private boolean solved;
@@ -23,6 +27,7 @@ public class Click extends PApplet implements DigitalInputStateChangeListener {
     private int width;
     private int height;
 
+
     public Click(PApplet p, Game game) {
         this.p = p;
         this.game = game;
@@ -32,19 +37,21 @@ public class Click extends PApplet implements DigitalInputStateChangeListener {
     }
 
     public void draw(){
+        // Draw the text
         p.fill(textR,textG,textB);
         p.stroke(textR, textG,textB);
         p.text("Click IT", (width/5) * 3, (height/10) * 8);
         p.noStroke();
         p.rectMode(CENTER);
 
+        // Draw the bars going up to the max amount when a click is registered
         if(counter <= maxStacks) {
             for (int i = 1; i < counter; i++) {
                 p.fill(r, g, b);
                 p.rect(((width)/5) * 3, ((height/2)+140) - (i * 15), 140, 10);
 
             }
-        } else {
+        } else { // Show all the bars green if its been completed and set solved true
             for (int i = 1; i < maxStacks; i++) {
                 p.fill(0, 255, 0);
                 p.rect(((width)/5) * 3, ((height/2)+140) - (i * 15), 140, 10);
@@ -54,6 +61,11 @@ public class Click extends PApplet implements DigitalInputStateChangeListener {
         }
     }
 
+    /**
+     * Monitor the state change of the joystick click
+     * Increment counter when it is registered
+     * @param event
+     */
     @Override
     public void onStateChange(DigitalInputStateChangeEvent event) {
         helper++;
@@ -62,16 +74,29 @@ public class Click extends PApplet implements DigitalInputStateChangeListener {
         }
     }
 
+    /**
+     * Change the text color, used to change to green
+     * @param r R color value
+     * @param g G color value
+     * @param b B color value
+     */
     private void setTextColor(int r, int g, int b){
         this.textR = r;
         this.textG = g;
         this.textB = b;
     }
 
+    /**
+     * Getter method to check if the part of the game has been solved
+     * @return
+     */
     public boolean isSolved() {
         return solved;
     }
 
+    /**
+     * Method to reset the class
+     */
     public void newGame(){
         solved = false;
 

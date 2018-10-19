@@ -2,6 +2,9 @@ import processing.core.PApplet;
 import processing.data.Table;
 import processing.data.TableRow;
 
+/**
+ * Class to look after all the functionality of the leaderboard
+ */
 public class LeaderBoard {
     private PApplet p;
     private Game game;
@@ -25,6 +28,9 @@ public class LeaderBoard {
         }
     }
 
+    /**
+     * Loads in the table if there is one, otherwise creates a new one
+     */
     public void leaderBoardSetup(){
         //Check if there is a leaderboard already
         table = null;
@@ -36,7 +42,6 @@ public class LeaderBoard {
                 int id = row.getInt("id");
             }
         } else {
-            // fail:
             // first run, make table
             table = new Table();
             table.addColumn("id");
@@ -51,6 +56,9 @@ public class LeaderBoard {
         }
     }
 
+    /**
+     * Prints the high score table
+     */
     public void printHighscores(){
         p.fill(0, 191, 255);
         p.textAlign(p.LEFT, p.CENTER);
@@ -58,7 +66,6 @@ public class LeaderBoard {
             TableRow newRow = table.getRow(i);
 
             String x = Integer.toString(newRow.getInt("time"));
-            //System.out.println(x.length());
             if(x.length() == 4){
                 x = x.charAt(0) + "." + x.substring(1, x.length());
             } else {
@@ -70,6 +77,11 @@ public class LeaderBoard {
         }
     }
 
+    /**
+     * Add a new score to the table, resort the table, print to console
+     * @param score score to input
+     * @param name name to input (SHould be string of 4 characters)
+     */
     void addNewScore(int score, String name) {
 
         TableRow newRow = table.addRow();
@@ -108,10 +120,18 @@ public class LeaderBoard {
         game.setGameState(10);
     }
 
+    /**
+     * File to save the data too
+     */
     void saveScores() {
         p.saveTable(table, "data/savescore.csv");
     }
 
+    /**
+     * Checks whether the score is high enough to make it to the top 5
+     * @param score int time
+     * @return True it is fast enough for top five, False too slow
+     */
     boolean highEnoughForHighScore(int score) {
 
         // test whether new score is high enough to get into the highscore

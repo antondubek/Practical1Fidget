@@ -2,6 +2,9 @@ import com.phidget22.VoltageRatioInputVoltageRatioChangeEvent;
 import com.phidget22.VoltageRatioInputVoltageRatioChangeListener;
 import processing.core.PApplet;
 
+/**
+ * Class to look after the light, returns the input voltage value scaled
+ */
 public class Light extends PApplet implements VoltageRatioInputVoltageRatioChangeListener {
 
     private PApplet p;

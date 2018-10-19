@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Game {
 
+    // The background game color and screen height and width
     private int backgroundR;
     private int backgroundG;
     private int backgroundB;
@@ -33,6 +34,14 @@ public class Game {
     private long completedIn;
 
 
+    /**
+     * Constructor
+     * @param width game width
+     * @param height game height
+     * @param backgroundR game background R
+     * @param backgroundG game background G
+     * @param backgroundB game background B
+     */
     public Game(int width, int height, int backgroundR, int backgroundG, int backgroundB) {
         this.backgroundR = backgroundR;
         this.backgroundG = backgroundG;
@@ -55,11 +64,10 @@ public class Game {
         */
     }
 
+    /**
+     * Reset the game
+     */
     public void resetGame(){
-        myArrayList.add(2);
-        myArrayList.add(3);
-        myArrayList.add(4);
-        myArrayList.add(5);
         myArrayList.add(2);
         myArrayList.add(3);
         myArrayList.add(4);
@@ -71,10 +79,9 @@ public class Game {
         timeOn = false;
         time = 0;
         completedIn = 0;
-
-
     }
 
+    // Some getters for other classes to use
     public int getBackgroundR() {
         return backgroundR;
     }
@@ -103,6 +110,9 @@ public class Game {
         gameState = value;
     }
 
+    /**
+     * Changes the game state randomly between the 4 states making sure to run them only once
+     */
     public void randomiseState(){
         if(myArrayList.size() == 0){
             gameState = 6;
@@ -113,15 +123,25 @@ public class Game {
         }
     }
 
+    /**
+     * Start stopwatch
+     */
     public void timerStart(){
         timeOn = true;
         this.time = System.currentTimeMillis();
     }
 
+    /**
+     * Ends stopwatch
+     */
     public void timerStop(){
         timeOn = false;
     }
 
+    /**
+     * Returns the time taken as a string
+     * @return String time taken formatted ss.SSS
+     */
     public String getTime(){
         if(timeOn) {
             completedIn = System.currentTimeMillis() - time;
@@ -129,15 +149,26 @@ public class Game {
         return (new SimpleDateFormat("ss.SSS")).format(completedIn);
     }
 
+    /**
+     * Get time as an integer
+     * @return integer time
+     */
     public int getTimeInt(){
         return (int)completedIn;
     }
 
+    /**
+     * Returns whether the timer is running or not
+     * @return boolean if time is running or not
+     */
     public boolean getTimeOn(){
         return timeOn;
     }
 
 
+    /**
+     * Initialises the notification LEDs
+     */
     public void initialiseLEDs(){
         int phidgetNo = 274077;
 
@@ -171,6 +202,9 @@ public class Game {
 
     }
 
+    /**
+     * Updates what LEDs are on based on the gamestate
+     */
     public void LEDUpdate(){
 
         if(gameState == 1){
@@ -206,6 +240,7 @@ public class Game {
                 System.out.println(e);
             }
         } else if(gameState == 6){
+            // Flashes the LEDs
             if(on){
                 try{
                     soundLED.setState(false);
@@ -233,6 +268,10 @@ public class Game {
         }
     }
 
+    /**
+     * Sets timer LED from Red to Green and vice versa
+     * @param red whether you want it Red, if False will go green
+     */
     public void setRed(boolean red){
         if (red){
             try {

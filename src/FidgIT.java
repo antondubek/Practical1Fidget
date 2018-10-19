@@ -3,8 +3,15 @@ import com.phidget22.*;
 import processing.core.PApplet;
 import processing.core.PFont;
 
+/**
+ * Main Game Class containing settings and setup
+ */
 public class FidgIT extends PApplet {
 
+    /**
+     * Needed to get Processing working with intellij
+     * @param args
+     */
     public static void main(String[] args) {
         PApplet.main("FidgIT");
     }
@@ -24,6 +31,9 @@ public class FidgIT extends PApplet {
     private String instructions = "";
 
 
+    /**
+     * Settings method, creates the window and does some smoothing
+     */
     public void settings(){
 
         // Define the window size
@@ -33,6 +43,9 @@ public class FidgIT extends PApplet {
         smooth();
     }
 
+    /**
+     * Main setup class, contains setup of all hardware inputs and outputs
+     */
     public void setup(){
 
         // Initialisation of Inputs and Outputs
@@ -49,7 +62,6 @@ public class FidgIT extends PApplet {
 
         // Set serial numbers
         int phidgetNo = 274077;
-        //int servoNo = 306007;
 
         //Initialise all the inputs and outputs
         try {
@@ -57,7 +69,6 @@ public class FidgIT extends PApplet {
             chLin1 = new VoltageRatioInput();
             chLin2 = new VoltageRatioInput();
 
-            //servo = new RCServo();
             click = new DigitalInput();
             sound = new VoltageInput();
             light = new VoltageRatioInput();
@@ -67,7 +78,6 @@ public class FidgIT extends PApplet {
             chLin2.setDeviceSerialNumber(phidgetNo);
 
             sound.setDeviceSerialNumber(phidgetNo);
-            //servo.setDeviceSerialNumber(servoNo);
             click.setDeviceSerialNumber(phidgetNo);
             light.setDeviceSerialNumber(phidgetNo);
 
@@ -76,7 +86,6 @@ public class FidgIT extends PApplet {
             chLin2.setChannel(4);
             sound.setChannel(1);
 
-            //servo.setChannel(0);
             click.setChannel(7);
             light.setChannel(0);
 
@@ -85,7 +94,6 @@ public class FidgIT extends PApplet {
             chLin2.open();
 
             sound.open();
-            //servo.open(5000);
             click.open();
             light.open();
 
@@ -96,15 +104,6 @@ public class FidgIT extends PApplet {
             sound.addVoltageChangeListener(mySound);
             light.addVoltageRatioChangeListener(myLight);
 
-
-
-            //servo.setTargetPosition(0);
-            //System.out.println(servo.getEngaged());
-            //servo.setEngaged(true);
-
-            //servo.setTargetPosition(45);
-            //servo.setTargetPosition(90);
-
         } catch (PhidgetException e) {
             System.out.println(e);
         }
@@ -112,9 +111,14 @@ public class FidgIT extends PApplet {
         lB.leaderBoardSetup();
     }
 
+    /**
+     * Main draw method, sets background and contains all various game states
+     */
     public void draw() {
+        //Set background color
         background(game.getBackgroundR(), game.getBackgroundG(), game.getBackgroundB());
 
+        // Set the initial LED state
         int currentState = game.getGameState();
         game.LEDUpdate();
 
@@ -128,14 +132,18 @@ public class FidgIT extends PApplet {
         int width = game.getWidth();
         int height = game.getHeight();
 
+        // Display text at the top
         text(goText, width/2, (height/10) * 9);
 
 
-        if(currentState == 1){
+        if(currentState == 1){ // Welcome screen
+            // Print instructions and intro text
             printTopText();
             printInstructions();
             game.setRed(true);
             goText = "Cover Sensor to Start";
+
+            // If the light sensor is covered
             if(myLight.getSensorReading() < 10 && !game.getTimeOn()){
                 clearInstructions();
                 goText = "GO!!!";
@@ -143,17 +151,21 @@ public class FidgIT extends PApplet {
                 game.setRed(false);
                 game.randomiseState();
             }
-        } else if(currentState == 2){
-
+        } else if(currentState == 2){ // Flick it
+            // Reprint top text
             printTopText();
+            // Run the class draw method
             myBall.draw();
+            // Update the timer at the bottom
             goText = game.getTime();
+            // When the part is solved
             if(myBall.isSolved()){
+                //reset the game
                 myBall.newGame();
+                // Call another random state
                 game.randomiseState();
             }
-        } else if(currentState == 3){
-
+        } else if(currentState == 3){ // Twist it
             printTopText();
             myArc.draw();
             goText = game.getTime();
@@ -161,8 +173,7 @@ public class FidgIT extends PApplet {
                 myArc.newGame();
                 game.randomiseState();
             }
-        } else if(currentState == 4){
-
+        } else if(currentState == 4){ // Click it
             printTopText();
             myClick.draw();
             goText = game.getTime();
@@ -170,7 +181,7 @@ public class FidgIT extends PApplet {
                 myClick.newGame();
                 game.randomiseState();
             }
-        } else if(currentState == 5){
+        } else if(currentState == 5){ // Clap it
             printTopText();
             mySound.draw();
             goText = game.getTime();
@@ -178,23 +189,29 @@ public class FidgIT extends PApplet {
                 mySound.newGame();
                 game.randomiseState();
             }
-        } else if(currentState == 6){
+        } else if(currentState == 6){ // Completed screen
+            // Stop timer
             game.timerStop();
+            // Reset text
             goText = "";
+            // Set led red
             game.setRed(true);
 
+            // Display the score
             fill(255,255,255);
             stroke(255,255,255);
             textSize(50);
             String newText = ("COMPLETED in " + game.getTime() + " seconds.");
             text(newText, width/2, (height/8));
 
+            // Print the highscores
             lB.printHighscores();
 
             textAlign(CENTER, CENTER);
             textSize(32);
             fill(255,255,255);
 
+            // Check if the score is good enough to get into the top 5
             if(lB.highEnoughForHighScore(game.getTimeInt())){
                 text("Press space to enter name, N for new game or Q to Quit", width/2, (height/10) * 8);
             } else {
@@ -202,7 +219,7 @@ public class FidgIT extends PApplet {
             }
 
         }
-        else if(currentState == 8){
+        else if(currentState == 8){ // Enter the name Screen
             fill(255, 255, 255);
             text("Please enter your name", width/2, height/4);
             textSize(32);
@@ -210,6 +227,7 @@ public class FidgIT extends PApplet {
             text("Use cursor left right and up and down, return to finish input", width/2, height/10 * 8);
             textSize(80);
 
+            // Set leaderboard name
             int i=0;
             for (char c : lB.letters) {
                 fill(255, 255, 255);
@@ -218,12 +236,15 @@ public class FidgIT extends PApplet {
                 text((lB.letters[i])+"", ((width/2) - 100)+i*65, height/2);
                 i++;
             }
-        } else if (currentState == 9){
+        } else if (currentState == 9){ // SHow the updated leaderboard with username
 
+            // Formats the inputted name
             lB.result=""+ lB.letters[0]+ lB.letters[1]+ lB.letters[2]+ lB.letters[3];
             println(lB.result);
 
+            // Adds the name and score to the leaderboard
             lB.addNewScore(game.getTimeInt(), lB.result);
+            // Saves the new table to the file
             lB.saveScores();
         } else if(currentState == 10) {
             fill(255, 255, 255);
@@ -238,18 +259,24 @@ public class FidgIT extends PApplet {
             text("Press SPACE for new game or Q to quit", width / 2, (height / 10) * 9);
         }
 
-        else if(currentState == 11){
+        else if(currentState == 11){ // Resets the game for a new game
             newGame();
             game.resetGame();
         }
     }
 
+    /**
+     * Prints the top text
+     */
     public void printTopText(){
         textSize(50);
         text("Welcome to FidgIT", width/2, height/10);
         textAlign(CENTER, TOP);
     }
 
+    /**
+     * Prints the instructions for the game
+     */
     public void printInstructions(){
         textSize(32);
         instructions = ("FidgIT is a reaction game, aimed to test your, speed, agility and " +
@@ -260,10 +287,16 @@ public class FidgIT extends PApplet {
         textAlign(CENTER, TOP);
     }
 
+    /**
+     * Removes the instructions when the game starts
+     */
     public void clearInstructions(){
         instructions = "";
     }
 
+    /**
+     * Resets any variables for a new game
+     */
     public void newGame(){
         // Leaderboard Initialisation
         lB.letters = new char[4]; // 4 letters
@@ -271,12 +304,16 @@ public class FidgIT extends PApplet {
         lB.result="";
     }
 
+    /**
+     * Registers keystrokes and processes them based on game state
+     */
     public void keyPressed() {
 
+        // get the current gamestate
         int currentState = game.getGameState();
-        // state tells how the program works:
-        if (currentState==6) {
 
+
+        if (currentState==6) { // Completed screen
             if (key == ' ') { // Press space to add score
                 lB.letters = new char[4];
                 for (int i = 0; i< lB.letters.length; i++) {
@@ -287,7 +324,7 @@ public class FidgIT extends PApplet {
                     game.setGameState(8);
                 }
             } else if (key == 'n'){
-                game.setGameState(11);
+                game.setGameState(11); // Reset game
             } else if (key == 'q' || key == 'Q'){
                 exit();
             }

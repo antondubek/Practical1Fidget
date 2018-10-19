@@ -5,6 +5,7 @@ import processing.core.PApplet;
 
 class Ministick extends PApplet implements VoltageRatioInputVoltageRatioChangeListener {
 
+    // Initialisation of class variables
     private PApplet p;
     private Game game;
     private boolean solved;
@@ -80,11 +81,13 @@ class Ministick extends PApplet implements VoltageRatioInputVoltageRatioChangeLi
             bottom = true;
         }
 
+        // If the top and the bottom is completed lower the amount of times needed to compelete
         if(top & bottom){
             display--;
             reset();
         }
 
+        // If it has been completed the number of times needed
         if(display <= 0){
             setBallColor(0,255,0);
             setTextColor(0,255,0);
@@ -96,6 +99,10 @@ class Ministick extends PApplet implements VoltageRatioInputVoltageRatioChangeLi
 
     }
 
+    /**
+     * Listener for the voltage changes when moving the joystick
+     * @param rce
+     */
     public void onVoltageRatioChange(VoltageRatioInputVoltageRatioChangeEvent rce) {
         try {
             if (rce.getSource().getChannel()==4) {
@@ -112,30 +119,57 @@ class Ministick extends PApplet implements VoltageRatioInputVoltageRatioChangeLi
         }
     }
 
+    /**
+     * Change the ball color
+     * @param r
+     * @param g
+     * @param b
+     */
     private void setBallColor(int r, int g, int b) {
         this.ballR = r;
         this.ballG = g;
         this.ballB = b;
     }
 
+    /**
+     * Change the top line color
+     * @param r
+     * @param g
+     * @param b
+     */
     private void setTopLineColor(int r, int g, int b){
         this.topLineR = r;
         this.topLineG = g;
         this.topLineB = b;
     }
 
+    /**
+     * Change the bottom line color
+     * @param r
+     * @param g
+     * @param b
+     */
     private void setBotLineColor(int r, int g, int b){
         this.botLineR = r;
         this.botLineG = g;
         this.botLineB = b;
     }
 
+    /**
+     * Change the text color
+     * @param r
+     * @param g
+     * @param b
+     */
     private void setTextColor(int r, int g, int b){
         this.textR = r;
         this.textG = g;
         this.textB = b;
     }
 
+    /**
+     * Reset the game variables
+     */
     private void reset(){
         setTopLineColor(0,191,255);
         setBotLineColor(0,191,255);
@@ -143,10 +177,17 @@ class Ministick extends PApplet implements VoltageRatioInputVoltageRatioChangeLi
         bottom = false;
     }
 
+    /**
+     * Returns if the part of the game is solved
+     * @return
+     */
     public boolean isSolved() {
         return solved;
     }
 
+    /**
+     * Prints the instruction text
+     */
     private void printText(){
         String toDisplay = "";
         p.fill(textR,textG,textB);
@@ -159,6 +200,9 @@ class Ministick extends PApplet implements VoltageRatioInputVoltageRatioChangeLi
         p.text(toDisplay, width/5, (height/10) * 8);
     }
 
+    /**
+     * Resets the whole class
+     */
     public void newGame(){
         solved = false;
 
@@ -187,6 +231,7 @@ class Ministick extends PApplet implements VoltageRatioInputVoltageRatioChangeLi
         top = false;
         bottom = false;
 
+        // Set the amount of times needed to compelte part of game
         display = 3;
     }
 }
